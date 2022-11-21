@@ -111,9 +111,10 @@ const Scanner = ({
           inputStream: {
             type: "LiveStream",
             constraints: {
-              ...constraints,
-              ...(cameraId && { deviceId: cameraId }),
-              ...(!cameraId && { facingMode })
+              width: 640,
+              height: 480,
+              facingMode: "environment",
+              deviceId: "7832475934759384534"
             },
             target: scannerRef.current
           },
