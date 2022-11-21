@@ -1,5 +1,5 @@
-import React, { useCallback, useLayoutEffect } from "react";
-//import PropTypes from "prop-types";
+import { useCallback, useLayoutEffect } from "react";
+import PropTypes from "prop-types";
 import Quagga from "@ericblade/quagga2";
 
 function getMedian(arr) {
@@ -111,10 +111,9 @@ const Scanner = ({
           inputStream: {
             type: "LiveStream",
             constraints: {
-              width: 640,
-              height: 480,
-              facingMode: "environment",
-              deviceId: "7832475934759384534"
+              ...constraints,
+              ...(cameraId && { deviceId: cameraId }),
+              ...(!cameraId && { facingMode })
             },
             target: scannerRef.current
           },
@@ -163,17 +162,17 @@ const Scanner = ({
   return null;
 };
 
-// Scanner.propTypes = {
-//   onDetected: PropTypes.func.isRequired,
-//   scannerRef: PropTypes.object.isRequired,
-//   onScannerReady: PropTypes.func,
-//   cameraId: PropTypes.string,
-//   facingMode: PropTypes.string,
-//   constraints: PropTypes.object,
-//   locator: PropTypes.object,
-//   numOfWorkers: PropTypes.number,
-//   decoders: PropTypes.array,
-//   locate: PropTypes.bool
-//};
+Scanner.propTypes = {
+  onDetected: PropTypes.func.isRequired,
+  scannerRef: PropTypes.object.isRequired,
+  onScannerReady: PropTypes.func,
+  cameraId: PropTypes.string,
+  facingMode: PropTypes.string,
+  constraints: PropTypes.object,
+  locator: PropTypes.object,
+  numOfWorkers: PropTypes.number,
+  decoders: PropTypes.array,
+  locate: PropTypes.bool
+};
 
 export default Scanner;
