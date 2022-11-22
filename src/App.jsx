@@ -106,69 +106,48 @@
 
 // export default App;
 
-import React, { useState, useRef } from "react";
-import Scanner from "./Scanner";
-import Result from "./Result";
-import { getCamerasFromMediaDevices } from "./utils";
 
-const App = () => {
-  const [scanning, setScanning] = useState(false);
-  const [results, setResults] = useState([]);
-  const scannerRef = useRef(null);
-  const total = results.length;
+import React, { Component } from 'react'
+import Scanner from './Scanner'
+import {TextareaAutosize, Paper} from '@material-ui/core'
 
-  console.log(results);
-  const getCameras = () => {
-    if (navigator.mediaDevices) {
-      return getCamerasFromMediaDevices();
-    }
-  };
-  const onStart = () => {
-    console.log("###", "start");
-    setScanning(true);
-  };
-  const onStop = () => {
-    setScanning(false);
-  };
-  return (
-    <div className="container">
-       {scanning ?
-        <div className="flyOut">
+class App extends Component {
+  state = {
+    results: [],
+    show: true,
+  }
+
+  _scan = () => {
+    this.setState({ scanning: !this.state.scanning })
+  }
+
+  _onDetected = result => {
+    this.setState({ results: [] })
+    this.setState({ results: this.state.results.concat([result]) })
+    this._scan();
+  }
+
+  render() {
+    return (
+      <div>
         
-      
-              <div id="reader" ref={scannerRef}>
-                <canvas className="drawingBuffer" />
-                
-                <Scanner
-                  isScanner={scanning}
-                  scannerRef={scannerRef}
-                  onDetected={(result) => {setResults([...results, result]); setScanning(false)}}
-                />
-                
-
-              </div>
-              </div>
-            : null }
-        
+        <span>Barcode Scanner</span>
        
-      <div className="results">
-          <ul className="results">
-            {results.map(
-              (result) =>
-                result.codeResult && (
-                  <Result key={result.codeResult.code} result={result} />
-                )
-            )}
-          </ul>
-        </div>
-        <div className="actions">
-          <h1>Barcode Quagga2 </h1>
-          <button onClick={onStart}>Start Cammera</button>
-          <button onClick={onStop}>Stop Cammera</button>
-          {results[total -1]}
-        </div>
-    </div>
-  );
-};
+        <Paper variant="outlined" style={{marginTop:30, width:640, height:320}}>
+          <Scanner onDetected={this._onDetected} />
+        </Paper>
+       
+
+        <TextareaAutosize
+            style={{fontSize:32, width:320, height:100, marginTop:30}}
+            rowsMax={4}
+            defaultValue={'No data scanned'}
+            value={this.state.results[0] ? this.state.results[0].codeResult.code : 'No data scanned'}
+        />
+
+      </div>
+    )
+  }
+}
 
 export default App;
