@@ -107,56 +107,101 @@
 // export default App;
 
 
-import React, { Component } from 'react'
-import Scanner from './Scanner'
-import {TextareaAutosize, Paper} from '@material-ui/core'
+// import React, { Component } from 'react'
+// import Scanner from './Scanner'
+// import {TextareaAutosize, Paper} from '@material-ui/core'
+// import { BoxScan } from './Styles'
 
-class App extends Component {
+// class App extends Component {
   
-  state = {
-    results: [],
-    show: false,
-  }
+//   state = {
+//     results: [],
+//     show: false,
+//   }
   
-  _scan = () => {
-    this.setState({ scanning: !this.state.scanning })
-  }
-  _active = () => {
-    this.setState({ show: !this.state.show })
-  }
+//   _scan = () => {
+//     this.setState({ scanning: !this.state.scanning })
+//   }
+//   _active = () => {
+//     console.log(this.state.show)
+//     this.setState({ show: !this.state.show })
+//   }
 
-  _onDetected = result => {
-    this.setState({ results: [] })
-    this.setState({ results: this.state.results.concat([result]) })
-    this.setState({ show: !this.state.show })
-    this._scan();
-  }
+//   _onDetected = result => {
+//     this.setState({ results: [] })
+//     this.setState({ results: this.state.results.concat([result]) })
+//     this.setState({ show: !this.state.show })
+//     this._scan();
+//   }
 
-  render() {
-    return (
+//   render() {
+//     return (
+//       <div>
+//         <span>Barcode Scanner</span>
+//         <button onClick={this._active}>Ler código</button>
+       
+
+//        {this.state.show ?
+//           <BoxScan>
+//             <Scanner onDetected={this._onDetected} />
+//           </BoxScan>
+//         :null }
+       
+
+//         <TextareaAutosize
+//             style={{fontSize:32, width:320, height:100, marginTop:30}}
+//             rowsMax={4}
+//             defaultValue={'No data scanned'}
+//             value={this.state.results[0] ? this.state.results[this.state.results.length - 1].codeResult.code : 'No data scanned'}
+//         />
+
+//       </div>
+//     )
+//   }
+// }
+
+// export default App;
+
+import React, { useState } from 'react';
+import { Scanner } from './Scanner';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+
+const App = () => {
+  const [scanCode, setScanCode] = useState('');
+  const [modal, setModal] = useState(false);
+
+  const _toggle = () => {
+    setModal(!modal);
+  };
+
+  const _onDetected = (result) => {
+    setModal(false);
+    setScanCode(result ? result.codeResult.code : '');
+  };
+
+  return (
+    <div>
+      <button onClick={_toggle}>
+        Scan Barcode
+      </button>
+
       <div>
-        
-        <span>Barcode Scanner</span>
-       
-       <button onClick={this._active}>Ler código</button>
-
-       {this.state.show ?
-        <Paper variant="outlined" style={{marginTop:30, width:640, height:320}}>
-          <Scanner onDetected={this._onDetected} />
-        </Paper>
-        :null }
-       
-
-        <TextareaAutosize
-            style={{fontSize:32, width:320, height:100, marginTop:30}}
-            rowsMax={4}
-            defaultValue={'No data scanned'}
-            value={this.state.results[0] ? this.state.results[this.state.results.length - 1].codeResult.code : 'No data scanned'}
-        />
-
+        <input id="scanner_result" type="text" value={scanCode} />
       </div>
-    )
-  }
-}
 
-export default App;
+     <Dialog
+        open={modal}
+        onClose={_toggle}
+        aria-labelledby="simple-modal-title"
+        aria-describedby="simple-modal-description"
+      > 
+        <DialogContent>
+          <Scanner handleScan={_onDetected} />
+        </DialogContent>
+        </Dialog>
+      </div>
+   
+  );
+};
+export default App ;
